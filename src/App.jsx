@@ -1,25 +1,8 @@
-import './App.css'
+import './App.css';
+import { Login } from './components/Login/Login';
 
-export const App = () => 
-  (
-    <div className="container">
-      <form>
-        <h1>Iniciar sesión</h1>
-        <div>
-          <label>Email</label>
-          <input name="email" type="email"/>
-        </div>
-        <div>
-          <label>Contraseña</label>
-          <input name="password" type="password"/>
-        </div>
-        <div>
-          <button type="submit">Enviar</button>
-        </div>
-      </form>
-     
-    </div>
-  )
-
-
-export default App
+export const App = () => (
+    <>
+      <Login />
+    </>
+)
