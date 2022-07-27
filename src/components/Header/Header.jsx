@@ -1,7 +1,19 @@
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Header.styles.css';
 
-export default function Header() {
+export const Header = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("logged");
+    navigate('/login', { replace: true })
+  }
+  
   return (
-    <div>Header</div>
+    <header>
+      <img src='/img/goscrum.png' alt='logo'/>
+      <div onClick={handleLogout}>X</div>
+    </header>
   )
 }
