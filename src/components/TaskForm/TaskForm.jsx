@@ -1,4 +1,5 @@
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import "./TaskForm.styles.css";
 
 export const TaskForm = () => {
@@ -9,38 +10,70 @@ export const TaskForm = () => {
     description: "",
   };
 
-  const onSubmit = () => {
-    alert();
+  const onSubmit = (formData) => {
+    //event.preventDefault();
+    //alert();
   };
 
-  const formik = useFormik({ initialValues, onSubmit });
+  const validationSchema = Yup.object({
+    title: Yup.string()
+      .min(6, "Longitud minima de 6 caracteres")
+      .required("El titulo es requerido"),
+    status: Yup.string().required("El estatus es requerido"),
+    priority: Yup.string().required("La prioridad es requerida"),
+  });
 
-  const { handleSubmit, handleChange } = formik;
+  const formik = useFormik({ initialValues, validationSchema, onSubmit });
+
+  const { handleSubmit, handleChange, errors, touched, handleBlur } = formik;
+
+  console.log("errors", formik);
 
   return (
     <section className="task-form">
       <h2>Crear tarea</h2>
       <p>Crea tus tareas para gestionarlos con SCRUM</p>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div>
           <div>
-            <input name="title" onChange={handleChange} placeholder="Título" />
+            <input
+              name="title"
+              onChange={handleChange}
+              placeholder="Título"
+              onBlur={handleBlur}
+              className={errors.title ? "error" : ""}
+            />
+            {errors.title && touched.title && <span className="error-message">{errors.title}</span>}
           </div>
           <div>
-            <select name="status" onChange={handleChange}>
+            <select
+              name="status"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={errors.status ? "error" : ""}
+            >
               <option value="">Seleccionar un estado</option>
               <option value="new">Nueva</option>
               <option value="inProcess">En proceso</option>
               <option value="finished">Terminada</option>
             </select>
+            {errors.status && touched.status && <span className="error-message">{errors.status}</span>}
           </div>
           <div>
-            <select name="priority" onChange={handleChange}>
+            <select
+              name="priority"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={errors.priority ? "error" : ""}
+            >
               <option value="">Seleccionar una prioridad</option>
               <option value="low">Baja</option>
               <option value="medium">Media</option>
               <option value="high">Alta</option>
             </select>
+            {errors.priority && touched.priority && (
+              <span className="error-message">{errors.priority}</span>
+            )}
           </div>
         </div>
         <div>
