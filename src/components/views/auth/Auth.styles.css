@@ -30,7 +30,20 @@
   padding: 8px 0;
 }
 
-.auth input {
+.auth > form > div > a {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+}
+
+.auth .error {
+  border: solid 1px var(--global-primary-color);
+  box-shadow: 3px 3px rgba(255,0,0,.4);
+  margin-bottom: 4px;
+}
+
+.auth input,
+.auth select {
   height: 35px;
   border-radius: var(--global-radius);
   border: var(--global-border);
@@ -69,5 +82,4 @@
     border-radius: var(--global-radius);
     background-color: white;
   }
-  
 }

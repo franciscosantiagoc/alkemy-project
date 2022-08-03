@@ -27,8 +27,6 @@ export const TaskForm = () => {
 
   const { handleSubmit, handleChange, errors, touched, handleBlur } = formik;
 
-  console.log("errors", formik);
-
   return (
     <section className="task-form">
       <h2>Crear tarea</h2>
