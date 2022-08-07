@@ -30,6 +30,9 @@
   padding: 8px 0;
 }
 
+.auth > form > div > input {
+  padding: 5px !important;
+}
 .auth > form > div > a {
   text-decoration: none;
   color: black;

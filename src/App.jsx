@@ -1,20 +1,20 @@
-import React, { lazy, Suspense } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import { Login } from "./components/views/auth/Login/Login";
-import { Register } from "./components/views/auth/Register/Register";
-import { Tasks } from "./components/views/Tasks/Tasks";
-import Registered from "./components/views/Registered/Registered";
-import "./App.css";
+import React, { lazy, Suspense } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Login } from './components/views/auth/Login/Login'
+import { Register } from './components/views/auth/Register/Register'
+import { Tasks } from './components/views/Tasks/Tasks'
+import Registered from './components/views/Registered/Registered'
+import './App.css'
 
-const Error404 = lazy(() => import("./components/views/Error404/Error404"));
+const Error404 = lazy(() => import('./components/views/Error404/Error404'))
 
 const RequireAuth = ({ children }) => {
-  if (!localStorage.getItem("logged")) {
-    return <Navigate to="/login" replace={true} />;
+  if (!localStorage.getItem('token')) {
+    return <Navigate to="/login" replace={true} />
   }
-  return children;
-};
+  return children
+}
 
 const pageTransition = {
   in: {
@@ -23,10 +23,10 @@ const pageTransition = {
   out: {
     opasity: 0,
   },
-};
+}
 
 export const App = () => {
-  const location = useLocation();
+  const location = useLocation()
   return (
     <AnimatePresence>
       <Routes location={location} key={location.pathname}>
@@ -107,5 +107,5 @@ export const App = () => {
         />
       </Routes>
     </AnimatePresence>
-  );
-};
+  )
+}

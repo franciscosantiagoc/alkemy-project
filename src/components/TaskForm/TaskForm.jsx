@@ -2,17 +2,32 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./TaskForm.styles.css";
 
+const { VITE_API_ENDPOINT } = import.meta.env;
+
 export const TaskForm = () => {
   const initialValues = {
     title: "",
     status: "",
-    priority: "",
+    importance: "",
     description: "",
   };
 
-  const onSubmit = (formData) => {
-    //event.preventDefault();
-    //alert();
+  const onSubmit = () => {
+    fetch(`${VITE_API_ENDPOINT}task`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        task: values,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert("Tarea creada correctamente");
+        resetForm();
+      });
   };
 
   const validationSchema = Yup.object({
@@ -20,12 +35,21 @@ export const TaskForm = () => {
       .min(6, "Longitud minima de 6 caracteres")
       .required("El titulo es requerido"),
     status: Yup.string().required("El estatus es requerido"),
-    priority: Yup.string().required("La prioridad es requerida"),
+    importance: Yup.string().required("La prioridad es requerida"),
+    description: Yup.string().required("La descripción es requerida"),
   });
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
 
-  const { handleSubmit, handleChange, errors, touched, handleBlur } = formik;
+  const {
+    handleSubmit,
+    handleChange,
+    errors,
+    touched,
+    handleBlur,
+    values,
+    resetForm,
+  } = formik;
 
   return (
     <section className="task-form">
@@ -39,38 +63,45 @@ export const TaskForm = () => {
               onChange={handleChange}
               placeholder="Título"
               onBlur={handleBlur}
-              className={errors.title ? "error" : ""}
+              className={errors.title && touched.title ? "error" : ""}
+              value={values.title}
             />
-            {errors.title && touched.title && <span className="error-message">{errors.title}</span>}
+            {errors.title && touched.title && (
+              <span className="error-message">{errors.title}</span>
+            )}
           </div>
           <div>
             <select
               name="status"
               onChange={handleChange}
               onBlur={handleBlur}
-              className={errors.status ? "error" : ""}
+              className={errors.status && touched.status ? "error" : ""}
+              value={values.status}
             >
               <option value="">Seleccionar un estado</option>
-              <option value="new">Nueva</option>
-              <option value="inProcess">En proceso</option>
-              <option value="finished">Terminada</option>
+              <option value="NEW">Nueva</option>
+              <option value="IN PROGRESS">En proceso</option>
+              <option value="FINISHED">Terminada</option>
             </select>
-            {errors.status && touched.status && <span className="error-message">{errors.status}</span>}
+            {errors.status && touched.status && (
+              <span className="error-message">{errors.status}</span>
+            )}
           </div>
           <div>
             <select
-              name="priority"
+              name="importance"
               onChange={handleChange}
               onBlur={handleBlur}
-              className={errors.priority ? "error" : ""}
+              className={errors.importance && touched.importance ? "error" : ""}
+              value={values.importance}
             >
               <option value="">Seleccionar una prioridad</option>
-              <option value="low">Baja</option>
-              <option value="medium">Media</option>
-              <option value="high">Alta</option>
+              <option value="LOW">Baja</option>
+              <option value="MEDIUM">Media</option>
+              <option value="HIGH">Alta</option>
             </select>
-            {errors.priority && touched.priority && (
-              <span className="error-message">{errors.priority}</span>
+            {errors.importance && touched.importance && (
+              <span className="error-message">{errors.importance}</span>
             )}
           </div>
         </div>
@@ -79,7 +110,13 @@ export const TaskForm = () => {
             name="description"
             onChange={handleChange}
             placeholder="Descripción"
+            onBlur={handleBlur}
+            className={errors.importance && touched.importance ? "error" : ""}
+            value={values.description}
           />
+          {errors.description && touched.description && (
+            <span className="error-message">{errors.description}</span>
+          )}
         </div>
         <button type="submit">Crear</button>
       </form>

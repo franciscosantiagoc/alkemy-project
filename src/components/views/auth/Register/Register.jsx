@@ -1,47 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useNavigate, Link } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { Switch, FormControlLabel } from "@mui/material";
-import "../Auth.styles.css";
+import React, { useState, useEffect } from 'react'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { useNavigate, Link } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
+import { Switch, FormControlLabel } from '@mui/material'
+import '../Auth.styles.css'
 
-const { VITE_API_ENDPOINT } = import.meta.env;
+const { VITE_API_ENDPOINT } = import.meta.env
 
 export const Register = () => {
-  const [data, setData] = useState();
+  const [data, setData] = useState()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    fetch(`${ VITE_API_ENDPOINT }auth/data`)
+    fetch(`${VITE_API_ENDPOINT}auth/data`)
       .then((response) => response.json())
-      .then((data) => setData(data.result));
-  }, []);
+      .then((data) => setData(data.result))
+  }, [])
 
   const initialValues = {
-    userName: "",
-    email: "",
-    password: "",
-    teamID: "",
-    role: "",
-    continent: "",
-    region: "",
+    userName: '',
+    email: '',
+    password: '',
+    teamID: '',
+    role: '',
+    continent: '',
+    region: '',
     switch: false,
-  };
+  }
 
   const handleChangeContinent = (value) => {
-    setFieldValue("continent", value);
-    if (value !== "America") setFieldValue("region", "Otro");
-  };
+    setFieldValue('continent', value)
+    if (value !== 'America') setFieldValue('region', 'Otro')
+  }
+
   const onSubmit = () => {
-    console.log({ values });
-    const teamID = !values.teamID ? uuidv4() : values.teamID;
-    console.log("teamID: ", teamID);
-    fetch(`${ VITE_API_ENDPOINT }auth/register`, {
-      method: "POST",
+    const teamID = !values.teamID ? uuidv4() : values.teamID
+    fetch(`${VITE_API_ENDPOINT}auth/register`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         user: {
@@ -57,28 +56,28 @@ export const Register = () => {
     })
       .then((response) => response.json())
       .then((data) =>
-        navigate("/registered/" + data?.result?.user?.teamID, {
+        navigate('/registered/' + data?.result?.user?.teamID, {
           replace: true,
-        })
-      );
-  };
+        }),
+      )
+  }
 
   const validationSchema = Yup.object({
     userName: Yup.string()
-      .min(6, "Longitud minima de 6 caracteres")
-      .required("El nombre de usuario es requirido"),
+      .min(6, 'Longitud minima de 6 caracteres')
+      .required('El nombre de usuario es requirido'),
     password: Yup.string()
-      .min(8, "Longitud minima de 8 caracteres")
-      .required("La contraseña es requerida"),
+      .min(8, 'Longitud minima de 8 caracteres')
+      .required('La contraseña es requerida'),
     email: Yup.string()
-      .email("Debe ser un email válido")
-      .required("El email es requerido"),
-    role: Yup.string().required("El rol es requerido"),
-    continent: Yup.string().required("El continente es requerido"),
-    region: Yup.string().required("La región es requerida"),
-  });
+      .email('Debe ser un email válido')
+      .required('El email es requerido'),
+    role: Yup.string().required('El rol es requerido'),
+    continent: Yup.string().required('El continente es requerido'),
+    region: Yup.string().required('La región es requerida'),
+  })
 
-  const formik = useFormik({ initialValues, validationSchema, onSubmit });
+  const formik = useFormik({ initialValues, validationSchema, onSubmit })
 
   const {
     handleSubmit,
@@ -88,7 +87,7 @@ export const Register = () => {
     touched,
     handleBlur,
     setFieldValue,
-  } = formik;
+  } = formik
 
   return (
     <div className="auth">
@@ -102,7 +101,7 @@ export const Register = () => {
             onChange={handleChange}
             value={values.userName}
             onBlur={handleBlur}
-            className={errors.userName && touched.userName ? "error" : ""}
+            className={errors.userName && touched.userName ? 'error' : ''}
           />
           {errors.userName && touched.userName && (
             <span className="message-error">{errors.userName}</span>
@@ -116,7 +115,7 @@ export const Register = () => {
             onChange={handleChange}
             value={values.password}
             onBlur={handleBlur}
-            className={errors.password && touched.password ? "error" : ""}
+            className={errors.password && touched.password ? 'error' : ''}
           />
           {errors.password && touched.password && (
             <span className="message-error">{errors.password}</span>
@@ -130,7 +129,7 @@ export const Register = () => {
             onChange={handleChange}
             value={values.email}
             onBlur={handleBlur}
-            className={errors.email && touched.email ? "error" : ""}
+            className={errors.email && touched.email ? 'error' : ''}
           />
           {errors.email && touched.email && (
             <span className="message-error">{errors.email}</span>
@@ -141,7 +140,7 @@ export const Register = () => {
             <Switch
               value={values.switch}
               onChange={() =>
-                formik.setFieldValue("switch", !formik.values.switch)
+                formik.setFieldValue('switch', !formik.values.switch)
               }
               name="switch"
               color="secondary"
@@ -167,7 +166,7 @@ export const Register = () => {
             onChange={handleChange}
             value={values.role}
             onBlur={handleBlur}
-            className={errors.role && touched.role ? "error" : ""}
+            className={errors.role && touched.role ? 'error' : ''}
           >
             <option value="">Seleccionar un rol</option>
             {data?.Rol?.map((option) => (
@@ -189,7 +188,7 @@ export const Register = () => {
             }
             value={values.continent}
             onBlur={handleBlur}
-            className={errors.continent && touched.continent ? "error" : ""}
+            className={errors.continent && touched.continent ? 'error' : ''}
           >
             <option value="">Seleccionar un continente</option>
             {data?.continente?.map((option) => (
@@ -210,7 +209,7 @@ export const Register = () => {
               onChange={handleChange}
               value={values.region}
               onBlur={handleBlur}
-              className={errors.region && touched.region ? "error" : ""}
+              className={errors.region && touched.region ? 'error' : ''}
             >
               <option value="">Seleccionar un región</option>
               {data?.region?.map((option) => (
@@ -232,5 +231,5 @@ export const Register = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
