@@ -1,23 +1,24 @@
-import React, { useState } from 'react'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import { useNavigate, Link } from 'react-router-dom'
-import '../Auth.styles.css'
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useNavigate, Link } from "react-router-dom";
+import { sweetError } from "../../../../utils/sweetError";
+import "../Auth.styles.css";
 
-const { VITE_API_ENDPOINT } = import.meta.env
+const { VITE_API_ENDPOINT } = import.meta.env;
 
 export const Login = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const initialValues = {
-    userName: '',
-    password: '',
-  }
+    userName: "",
+    password: "",
+  };
 
   const onSubmit = () => {
     fetch(`${VITE_API_ENDPOINT}auth/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         userName: values.userName,
@@ -25,36 +26,30 @@ export const Login = () => {
       }),
     })
       .then((response) => response.json())
-      .then(({ result }) => {
-        localStorage.setItem('token', result.token)
-        navigate('/', { replace: true })
+      .then(({ status_code, result }) => {
+        if (status_code === 200) {
+          localStorage.setItem("token", result.token);
+          navigate("/", { replace: true });
+        } else {
+          sweetError();
+        }
       })
-      .catch((error) => alert('usuario no encontrado'))
-  }
+      .catch((error) => alert("usuario no encontrado"));
+  };
 
   const validationSchema = Yup.object({
-    userName: Yup.string()
-      .min(6, 'Longitud minima de 6 caracteres')
-      .required('El nombre de usuario es requirido'),
-    password: Yup.string()
-      .min(8, 'Longitud minima de 8 caracteres')
-      .required('La contraseña es requerida'),
-  })
+    userName: Yup.string().required("El nombre de usuario es requirido"),
+    password: Yup.string().required("La contraseña es requerida"),
+  });
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit,
-  })
+  });
 
-  const {
-    handleSubmit,
-    handleChange,
-    errors,
-    values,
-    touched,
-    handleBlur,
-  } = formik
+  const { handleSubmit, handleChange, errors, values, touched, handleBlur } =
+    formik;
 
   return (
     <div className="auth">
@@ -68,7 +63,7 @@ export const Login = () => {
             value={formik.values.userName}
             onChange={handleChange}
             onBlur={handleBlur}
-            className={errors.userName && touched.userName ? 'error' : ''}
+            className={errors.userName && touched.userName ? "error" : ""}
           />
           {formik.errors.userName && touched.userName && (
             <span className="message-error">{formik.errors.userName}</span>
@@ -82,7 +77,7 @@ export const Login = () => {
             value={formik.values.password}
             onChange={handleChange}
             onBlur={handleBlur}
-            className={errors.password && touched.password ? 'error' : ''}
+            className={errors.password && touched.password ? "error" : ""}
           />
           {formik.errors.password && touched.password && (
             <span className="message-error">{formik.errors.password}</span>
@@ -96,5 +91,5 @@ export const Login = () => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};

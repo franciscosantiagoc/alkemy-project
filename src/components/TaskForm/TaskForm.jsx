@@ -1,6 +1,8 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./TaskForm.styles.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const { VITE_API_ENDPOINT } = import.meta.env;
 
@@ -25,7 +27,7 @@ export const TaskForm = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        alert("Tarea creada correctamente");
+        toast("Tarea creada correctamente");
         resetForm();
       });
   };
@@ -120,6 +122,7 @@ export const TaskForm = () => {
         </div>
         <button type="submit">Crear</button>
       </form>
+      <ToastContainer />
     </section>
   );
 };
