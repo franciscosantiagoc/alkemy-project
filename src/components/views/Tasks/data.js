@@ -6,7 +6,7 @@ export const cardsData = [
     creator: 'Francisco Santiago',
     description: 'Description 1',
     status: 'finished',
-    priority: 'high',
+    importance: 'high',
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const cardsData = [
     creator: 'Francisco Santiago',
     description: 'Description 2',
     status: 'finished',
-    priority: 'high',
+    importance: 'high',
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const cardsData = [
     creator: 'Francisco Santiago',
     description: 'Description 3',
     status: 'finished',
-    priority: 'high',
+    importance: 'high',
   },
   {
     id: 4,
@@ -33,6 +33,6 @@ export const cardsData = [
     creator: 'Francisco Santiago',
     description: 'Description 4',
     status: 'finished',
-    priority: 'high',
+    importance: 'high',
   }
 ]

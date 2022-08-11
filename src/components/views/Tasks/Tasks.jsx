@@ -1,12 +1,19 @@
 import "./Tasks.styles.css";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
+import { useState, useEffect } from "react";
 import { useResize } from "../../../hooks/useResize";
 import { Header } from "../../Header/Header";
 import { TaskForm } from "../../TaskForm/TaskForm";
-import { cardsData } from "./data";
 import { Card } from "../../Card/Card";
+
+const { VITE_API_ENDPOINT } = import.meta.env;
 
 export const Tasks = () => {
   const { isPhone } = useResize();
+  const [loading, setLoading] = useState(false);
+  const [list, setList] = useState(null);
 
   const limitString = (str) => {
     if (str.length > 370) {
@@ -15,18 +22,58 @@ export const Tasks = () => {
     return { string: str, addButton: false };
   };
 
-  const renderAllCards = () => {
-    return cardsData.map((card) => (
-      <Card
-        key={card.id}
-        title={card.title}
-        datetime={card.datetime}
-        creator={card.creator}
-        status={card.status}
-        priority={card.priority}
-        description={card.description}
-      />
-    ));
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${VITE_API_ENDPOINT}task`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then(({ status_code, result }) => {
+        if (status_code === 200) {
+          setList(result);
+          setTimeout(() => {
+            setLoading(false);
+          }, 4000);
+        } else {
+          setList(null);
+        }
+      });
+  }, []);
+
+  const renderAllCards = (status_filter) => {
+    return list
+      ?.filter((card) => {
+        if (status_filter) {
+          return card.status === status_filter;
+        }
+        return true;
+      })
+      .map((card) => {
+        let {
+          _id,
+          title,
+          createdAt,
+          user: { userName },
+          status,
+          importance,
+          description,
+        } = card;
+
+        return (
+          <Card
+            key={_id}
+            title={title}
+            datetime={createdAt}
+            creator={userName}
+            status={status.toLowerCase()}
+            importance={importance.toLowerCase()}
+            description={description}
+          />
+        );
+      });
   };
   return (
     <>
@@ -37,69 +84,48 @@ export const Tasks = () => {
           <div className="list_header">
             <h2>Mis tareas</h2>
           </div>
-          {isPhone && <div className="list phone">{renderAllCards()}</div>}
+          {isPhone && (
+            <div className="list phone">
+              {!list?.length ? (
+                <div>No hay tareas registradas</div>
+              ) : loading ? (
+                <>
+                  <Skeleton />
+                  <Skeleton />
+                  <Skeleton />
+                </>
+              ) : (
+                renderAllCards(null)
+              )}
+            </div>
+          )}
 
           {!isPhone && (
             <div className="list_group">
-              <div className="list">
-                <h4>Nuevas</h4>
-                <div className="card">
-                  <div className="close">x</div>
-                  <h3>Tarea 1</h3>
-                  <h5>24/1</h5>
-                  <h6>Francisco Santiago!</h6>
-                  <button className="status" type="button">
-                    Nueva
-                  </button>
-                  <button className="priority">Alta</button>
-                  <p className="description">Descripcion de tarea a realizar</p>
-                </div>
-                <div className="card">
-                  <div className="close">x</div>
-                  <h3>Tarea 1</h3>
-                  <h5>24/1</h5>
-                  <h6>Francisco Santiago!</h6>
-                  <button className="status" type="button">
-                    Nueva
-                  </button>
-                  <button className="priority">Alta</button>
-                  <p className="description">
-                    {
-                      limitString(
-                        "Dolore et excepteur eiusmod dolore quis et qui reprehenderit tempor fugiat ipsum enim. Cillum adipisicing ut eu fugiat sit non. Qui nostrud fugiat consequat consectetur minim cillum dolor nostrud. Excepteur in adipisicing non sunt. Occaecat sint elit irure voluptate esse velit dolor aliquip commodo aute officia aute veniam. Dolore et excepteur eiusmod dolore quis et qui reprehenderit tempor fugiat ipsum enim. Cillum adipisicing ut eu fugiat sit non. Qui nostrud fugiat consequat consectetur minim cillum dolor nostrud. Excepteur in adipisicing non sunt. Occaecat sint elit irure voluptate esse velit dolor aliquip commodo aute officia aute veniam."
-                      ).string
-                    }
-                  </p>
-                </div>
-              </div>
-              <div className="list">
-                <h4>En proceso</h4>
-                <div className="card">
-                  <div className="close">x</div>
-                  <h3>Tarea 1</h3>
-                  <h5>24/1</h5>
-                  <h6>Francisco Santiago!</h6>
-                  <button className="status" type="button">
-                    Nueva
-                  </button>
-                  <button className="priority">Alta</button>
-                  <p className="description">Descripcion de tarea a realizar</p>
-                </div>
-              </div>
-              <div className="list">
-                <h4>Finalizadas</h4>
-                <div className="card">
-                  <div className="close">x</div>
-                  <h3>Tarea 1</h3>
-                  <h5>24/1</h5>
-                  <h6>Francisco Santiago!</h6>
-                  <button className="status" type="button">
-                    Nueva
-                  </button>
-                  <button className="priority">Alta</button>
-                  <p className="description">Descripcion de tarea a realizar</p>
-                </div>
-              </div>
+              {!list?.length ? (
+                <div>No hay tareas registradas</div>
+              ) : loading ? (
+                <>
+                  <Skeleton height={150} />
+                  <Skeleton height={150} />
+                  <Skeleton height={150} />
+                </>
+              ) : (
+                <>
+                  <div className="list">
+                    <h4>Nuevas</h4>
+                    {renderAllCards("NEW")}
+                  </div>
+                  <div className="list">
+                    <h4>En proceso</h4>
+                    {renderAllCards("IN PROGRESS")}
+                  </div>
+                  <div className="list">
+                    <h4>Finalizadas</h4>
+                    {renderAllCards("FINISHED")}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </section>

@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Card = (props) => {
-  const { title, datetime, creator, status, priority, description } = props;
+  const { title, datetime, creator, status, importance, description } = props;
 
   const limitString = (str) => {
     if (str.length > 370) {
@@ -19,7 +19,7 @@ export const Card = (props) => {
       <button className="status" type="button">
         {status}
       </button>
-      <button className="priority">{priority}</button>
+      <button className="importance">{importance}</button>
       <p className="description">{limitString(description).string}</p>
     </div>
   );
